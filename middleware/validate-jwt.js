@@ -22,6 +22,7 @@ if (req.method == "OPTIONS") {
 		if (payload) {
 			let foundUser = await Users.findOne({ where: { id: payload.id} });
 			if (foundUser) {
+				console.log(req.user);
 				req.user = foundUser;
 				next();
 			} else {

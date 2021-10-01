@@ -1,27 +1,23 @@
 // const Express = require('express');
 const router = require('express').Router();
 //Check https://elevenfifty.instructure.com/courses/762/pages/12-dot-2-2-implementing-validatesession?module_item_id=67423
-// const validateJWT = require("../middleware/validate-jwt");
+const validateJWT = require("../middleware/validate-jwt");
 // const { VacationModel } = require('../models')
+const Vacation = require('../db').import('../models/vacation');
 
 //Create Vacation
-router.post('/create', async (req, res) => {
-	const { photo, title, date, description } = req.body.vacation;
-	const { id } = req.user;
+router.post('/create', validateJWT, async (req, res) => {
+	console.log(req);
 	const vacationEntry = {
-		photo,
-		title,
-		date,
-		description,
-		userId: id
+		photo: req.body.photo,
+		title: req.body.title,
+		date: req.body.date,
+		description: req.body.description,
+		userId: req.user.id,
 	}
-	try {
-		const newVacation = await VacationModel.create(vacationEntry);
-		res.status(200).json(newVacation);
-	} catch (err) {
-		res.status(500).json({ error: err });
-	}
-	
+	Vacation.create(vacationEntry)
+		.then((entry) => res.status(200).json(entry))
+		.catch((err) => res.status(500).json({ error: err }));
 });
 
 //Get All Entries
@@ -35,18 +31,12 @@ router.get("/", async (req, res) => {
 });
 
 //Get Entries By User
-router.get("/mine", async (req, res) => {
-	let { id } = req.user;
-	try {
-		const userVacations = await VacationModel.findAll({
-			where: {
-				userId: id
-			}
-		});
-		res.status(200).json(userVacations);
-	} catch (err) {
-		res.status(500).json({ error: err });
-	}
+router.get("/getAllBlogsByUser", validateJWT, (req, res) => {
+	Vacation.findAll({
+		where: {userId: req.user.id}
+	})
+	.then((vacations) => res.status(200).json(vacations))
+	.catch((err) => res.status(500).json({ error: err }));
 });
 
 //Get Entries By Title
