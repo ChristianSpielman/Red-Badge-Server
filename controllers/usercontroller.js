@@ -3,7 +3,8 @@ const { UniqueConstraintError } = require("sequelize/lib/errors");
 const Users = require("../db").import("../models/users");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-let validateSession = require("../middleware/validate-jwt");
+let validateJWT = require("../middleware/validate-jwt");
+
 
 
 router.post("/register", (req, res) => {
@@ -48,6 +49,13 @@ router.post("/admin", (req, res) => {
         });
     })
     .catch((err) => res.status(500).json({ error: err }));
+});
+
+//Get All Users
+router.get("/getAllUsers", validateJWT, (req, res) => {
+	Users.findAll()
+	.then((users) => res.status(200).json(users))
+	.catch((err) => res.status(500).json({ error: err }));
 });
 
 router.post("/login", (req, res) => {
