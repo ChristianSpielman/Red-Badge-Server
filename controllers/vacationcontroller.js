@@ -39,6 +39,12 @@ router.get("/getAllBlogsByUser", validateJWT, (req, res) => {
 	.catch((err) => res.status(500).json({ error: err }));
 });
 
+router.get("/getAllBlogs", (req, res) => {
+	Vacation.findAll()
+	.then((vacations) => res.status(200).json(vacations))
+	.catch((err) => res.status(500).json({ error: err }));
+});
+
 //Get Entries By Title
 router.get("/:title", async (req, res) => {
 	const { title } = req.params;
