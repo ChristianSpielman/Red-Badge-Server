@@ -7,7 +7,7 @@ const Vacation = require('../db').import('../models/vacation');
 
 //Create Vacation
 router.post('/create', validateJWT, async (req, res) => {
-	console.log(req);
+	console.log(req.body);
 	const vacationEntry = {
 		photo: req.body.photo,
 		title: req.body.title,
@@ -82,18 +82,8 @@ router.put("/update/:entryId", async (req, res) => {
 
 //Delete
 router.delete("/delete/:id", async (req, res) => {
-    const ownerId = req.user.id;
-    const vacationId = req.params.id;
-
     try{
-        const query = {
-            where: {
-                id: vacationId,
-                owner: ownerId //Check here
-            }
-        };
-
-        await vacationModel.destroy(query);
+        await Vacation.destroy({where: { id: req.params.id}});
         res.status(200).json({ message: "Vacation Removed "});
     } catch (err) {
         res.status(500).json({ error: err});
