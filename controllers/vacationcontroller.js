@@ -7,83 +7,98 @@ const Vacation = require('../db').import('../models/vacation');
 
 //Create Vacation
 router.post('/create', validateJWT, async (req, res) => {
-	console.log(req.body);
-	const vacationEntry = {
-		photo: req.body.photo,
-		title: req.body.title,
-		date: req.body.date,
-		description: req.body.description,
-		userId: req.user.id,
-	}
-	Vacation.create(vacationEntry)
-		.then((entry) => res.status(200).json(entry))
-		.catch((err) => res.status(500).json({ error: err }));
+    console.log(req.body);
+    const vacationEntry = {
+        photo: req.body.photo,
+        title: req.body.title,
+        date: req.body.date,
+        description: req.body.description,
+        userId: req.user.id,
+    }
+    Vacation.create(vacationEntry)
+        .then((entry) => res.status(200).json(entry))
+        .catch((err) => res.status(500).json({ error: err }));
 });
 
 //Get All Entries
 router.get("/", async (req, res) => {
-	try {
-		const entries = await VacationModel.findAll();
-		res.status(200).json(entries);
-	} catch (err) {
-		res.status(500).json({ error: err });
-	}
+    try {
+        const entries = await VacationModel.findAll();
+        res.status(200).json(entries);
+    } catch (err) {
+        res.status(500).json({ error: err });
+    }
 });
 
 //Get Entries By User
 router.get("/getAllBlogsByUser", validateJWT, (req, res) => {
-	Vacation.findAll({
-		where: {userId: req.user.id}
-	})
-	.then((vacations) => res.status(200).json(vacations))
-	.catch((err) => res.status(500).json({ error: err }));
+    Vacation.findAll({
+        where: {userId: req.user.id}
+    })
+    .then((vacations) => res.status(200).json(vacations))
+    .catch((err) => res.status(500).json({ error: err }));
 });
 
 router.get("/getAllBlogs", (req, res) => {
-	Vacation.findAll()
-	.then((vacations) => res.status(200).json(vacations))
-	.catch((err) => res.status(500).json({ error: err }));
+    Vacation.findAll()
+    .then((vacations) => res.status(200).json(vacations))
+    .catch((err) => res.status(500).json({ error: err }));
 });
 
 //Get Entries By Title
 router.get("/:title", async (req, res) => {
-	const { title } = req.params;
-	try {
-		const results = await VacationModel.findAll({
-			where: { title: title }
-		});
-		res.status(200).json( results );
-	} catch (err) {
-		res.status(500).json({ error: err })
-	}
+    const { title } = req.params;
+    try {
+        const results = await VacationModel.findAll({
+            where: { title: title }
+        });
+        res.status(200).json( results );
+    } catch (err) {
+        res.status(500).json({ error: err })
+    }
 });
 
 //Update Vacations
-router.put("/update/:entryId", async (req, res) => {
-	const { photo, title, date, description } = req.body.journal;
-	const vacationId = req.params.entryId;
-	const userId = req.user.id;
+// router.put("/update/:entryId", async (req, res) => {
+//  const { photo, title, date, description } = req.body.journal;
+//  const vacationId = req.params.entryId;
+//  const userId = req.user.id;
 
-	const query = {
-		where: {
-			id: vacationId,
-			userId: userId //Check here was "owner"
-		}
-	};
+//  const query = {
+//      where: {
+//          id: vacationId,
+//          userId: userId //Check here was "owner"
+//      }
+//  };
+//  const updatedVacation = {
+//      photo: photo,
+//      title: title,
+//      date: date,
+//      description: description
+//  };
 
-	const updatedVacation = {
-		photo: photo,
-		title: title,
-		date: date,
-		description: description
-	};
-
-	try{
-		const update = await VacationModel.update(updatedVacation, query);
-		res.status(200).json(update);
-	} catch (err) {
-		res.status(500).json({ error: err });
-	}
+//  try{
+//      const update = await VacationModel.update(updatedVacation, query);
+//      res.status(200).json(update);
+//  } catch (err) {
+//      res.status(500).json({ error: err });
+//  }
+// });
+// -----  Update a Vacation  -----
+router.put("/update/:id", validateJWT, (req, res) => {
+    console.log(req.body, req.params)
+    const updateVacation = {
+        photo: req.body.photo,
+        title: req.body.title,
+        date: req.body.date,
+        description: req.body.description
+    };
+  
+    const query = { where: { id: req.params.id } };      
+  
+    Vacation.update(updateVacation, query)
+      .then((vacation) => res.status(200).json(vacation))
+      .catch((err) => res.status(500).json({ error: err }));
 });
 
 //Delete
@@ -97,7 +112,7 @@ router.delete("/delete/:id", async (req, res) => {
 })
 
 // router.get('/practice', validateJWT, (req, res) => {
-// 	res.send('Hey!! This is a practice route!')
+//  res.send('Hey!! This is a practice route!')
 // });
 
 module.exports = router;

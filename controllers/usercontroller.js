@@ -58,6 +58,16 @@ router.get("/getAllUsers", validateJWT, (req, res) => {
 	.catch((err) => res.status(500).json({ error: err }));
 });
 
+//Delete
+router.delete("/delete/:id", async (req, res) => {
+    try{
+        await Users.destroy({where: { id: req.params.id}});
+        res.status(200).json({ message: "User Removed "});
+    } catch (err) {
+        res.status(500).json({ error: err});
+    }
+})
+
 router.post("/login", (req, res) => {
     console.log(req.body)
     Users.findOne({ where: { email: req.body.email } }).then(
