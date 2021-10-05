@@ -1,13 +1,9 @@
-// const Express = require('express');
 const router = require('express').Router();
-//Check https://elevenfifty.instructure.com/courses/762/pages/12-dot-2-2-implementing-validatesession?module_item_id=67423
 const validateJWT = require("../middleware/validate-jwt");
-// const { VacationModel } = require('../models')
 const Vacation = require('../db').import('../models/vacation');
 
 //Create Vacation
 router.post('/create', validateJWT, async (req, res) => {
-    console.log(req.body);
     const vacationEntry = {
         photo: req.body.photo,
         title: req.body.title,
@@ -33,8 +29,15 @@ router.get("/", async (req, res) => {
 //Get Entries By User
 router.get("/getAllBlogsByUser", validateJWT, (req, res) => {
     Vacation.findAll({
-        where: {userId: req.user.id}
+        where: {userId: req.user.id},
+        order: [['date', 'DESC']]
     })
+    .then((vacations) => res.status(200).json(vacations))
+    .catch((err) => res.status(500).json({ error: err }));
+});
+
+router.get("/getAllBlogs", (req, res) => {
+    Vacation.findAll({order: [['date', 'DESC']]})
     .then((vacations) => res.status(200).json(vacations))
     .catch((err) => res.status(500).json({ error: err }));
 });
@@ -58,35 +61,8 @@ router.get("/:title", async (req, res) => {
     }
 });
 
-//Update Vacations
-// router.put("/update/:entryId", async (req, res) => {
-//  const { photo, title, date, description } = req.body.journal;
-//  const vacationId = req.params.entryId;
-//  const userId = req.user.id;
-
-//  const query = {
-//      where: {
-//          id: vacationId,
-//          userId: userId //Check here was "owner"
-//      }
-//  };
-//  const updatedVacation = {
-//      photo: photo,
-//      title: title,
-//      date: date,
-//      description: description
-//  };
-
-//  try{
-//      const update = await VacationModel.update(updatedVacation, query);
-//      res.status(200).json(update);
-//  } catch (err) {
-//      res.status(500).json({ error: err });
-//  }
-// });
 // -----  Update a Vacation  -----
 router.put("/update/:id", validateJWT, (req, res) => {
-    console.log(req.body, req.params)
     const updateVacation = {
         photo: req.body.photo,
         title: req.body.title,
@@ -110,9 +86,5 @@ router.delete("/delete/:id", async (req, res) => {
         res.status(500).json({ error: err});
     }
 })
-
-// router.get('/practice', validateJWT, (req, res) => {
-//  res.send('Hey!! This is a practice route!')
-// });
 
 module.exports = router;

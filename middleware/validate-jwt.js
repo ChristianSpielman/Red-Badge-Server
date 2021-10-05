@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-// const { restart } = require("nodemon");
 const Users = require("../db").import("../models/users");
 
 const validateJWT = async (req, res, next) => {
@@ -22,7 +21,6 @@ if (req.method == "OPTIONS") {
 		if (payload) {
 			let foundUser = await Users.findOne({ where: { id: payload.id} });
 			if (foundUser) {
-				console.log(req.user);
 				req.user = foundUser;
 				next();
 			} else {

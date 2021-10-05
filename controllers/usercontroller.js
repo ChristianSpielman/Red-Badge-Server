@@ -62,6 +62,19 @@ router.get("/getAllUsers", validateJWT, (req, res) => {
 	.catch((err) => res.status(500).json({ error: err }));
 });
 
+//Update User Info
+router.put("/update/:id", validateJWT, (req, res) => {
+    const updateUsers={
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+};
+    const query = { where: {id: req.params.id} };
+    Users.update(updateUsers, query)
+      .then((user) => res.status(201).json({ message: `${user} records updated` }))
+      .catch((err) => res.status(500).json({ error: err }));
+});
+
 //Delete
 router.delete("/delete/:id", async (req, res) => {
     try{
@@ -73,7 +86,6 @@ router.delete("/delete/:id", async (req, res) => {
 })
 
 router.post("/login", (req, res) => {
-    console.log(req.body)
     Users.findOne({ where: { email: req.body.email } }).then(
         (user) => {
             if (user) {
