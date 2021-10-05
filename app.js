@@ -2,6 +2,8 @@ require("dotenv").config();
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const dbConnection = require("./db");//added
+
 
 const sequelize = require('./db');
 sequelize.sync();
@@ -18,6 +20,16 @@ app.use("/vacation", vacation); //creates base url for vacation
 let planning = require("./controllers/planningcontroller");//imports controllers
 app.use("/planning", planning); // planning base url
 
-app.listen(process.env.PORT, () => {
-	console.log((`[Server]: App is listening on ${process.env.PORT}.`))
-});
+
+dbConnection.authenticate()
+	.then(() => dbConnection.sync())
+	.then(() => {
+		app.listen(process.env.PORT, () => console.log(`[Server]: App is listening on ${process.env.PORT}.`));
+	})
+	.catch((err) => {
+		console.log(`[Server] has crashed: ${err}`);
+	})
+
+// app.listen(process.env.PORT, () => {
+// 	console.log((`[Server]: App is listening on ${process.env.PORT}.`))
+// });

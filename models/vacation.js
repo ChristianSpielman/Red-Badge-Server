@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
 		description: {
 			type: DataTypes.STRING(2000),
 			allowNull: true,
-		}
+		},
 	});
 	
 	return Vacation;

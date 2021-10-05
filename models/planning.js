@@ -1,5 +1,9 @@
 module.exports = (sequelize, DataTypes) => {
     const Planning = sequelize.define('planning', {
+        photo: {
+			type: DataTypes.STRING,
+			allowNull: true,
+		},
         title: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -8,18 +12,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.DATEONLY,
             allowNull: true,
         },
-        itinerary : {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
         toDo: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
-        description: {
             type: DataTypes.STRING(2000),
             allowNull: true,
-        }
-    })
+        },
+    });
+    
     return Planning;
 }
