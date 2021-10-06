@@ -3,10 +3,7 @@ const { UniqueConstraintError } = require("sequelize/lib/errors");
 const Users = require("../db").import("../models/users");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-// const token = jwt.sign({id: newUser.id,},
-//     process.env.JWT_SECRET,
-//     {expiresIn: 60 * 60 * 12}
-//     )
+
 let validateJWT = require("../middleware/validate-jwt");
 
 
